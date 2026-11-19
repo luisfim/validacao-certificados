@@ -1,0 +1,24 @@
+VALIDACAO DE CERTIFICADOS - ENTREGA DA MENTORIA
+
+PARA ABRIR AGORA
+1. Tenha Java 21 instalado.
+2. Windows: abra iniciar.bat. Linux/macOS: execute sh iniciar.sh.
+3. Acesse http://localhost:8080 e mantenha o terminal aberto.
+4. Use os botoes Completo, Sem carga horaria e Datas inconsistentes.
+
+A demonstracao por texto funciona sem internet e sem chave de IA.
+O executavel ja esta em bin/validacao-certificados.jar.
+Para ler imagens/PDF com OCR, veja Docker ou Codespaces no README.
+
+PARA APRESENTAR
+Abra docs/APRESENTACAO.md. A fala esta por topicos, com explicacao
+e respostas curtas para perguntas. docs/DEMONSTRACAO.md tem a ordem dos cliques.
+
+PARA SUBIR NO GITHUB
+Copie para o seu repositorio preservando a pasta .git que ja existir.
+O .gitignore exclui bin/, target/, dados/ e .env de git add .
+Se usar upload pelo navegador, NAO envie bin/, target/ ou dados/.
+Inclua as pastas .mvn, .devcontainer e .github.
+
+O README explica o que funciona, o que foi simplificado e as limitacoes.
+A IA e opcional; a chamada paga nao foi testada com uma chave real.

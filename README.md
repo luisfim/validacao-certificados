@@ -1,120 +1,271 @@
-Validação de Certificados de Atividades Complementares
-Projeto acadêmico para auxiliar a conferência de certificados de cursos livres e oficinas apresentados por estudantes para aproveitamento de horas complementares.
-Autor: Luis Lucena Wanderley Galindo
-Curso: Análise e Desenvolvimento de Sistemas - CESAR School
-Semestre: 2026.2
-Professor: Kleber Meira
-Status: planejamento inicial. Este repositório documenta a proposta; a aplicação e as integrações serão desenvolvidas ao longo do semestre.
+# Validação de Certificados de Atividades Complementares
 
-Problema
-A conferência manual de certificados exige que a coordenação leia cada documento, identifique o aluno, verifique datas e registre a carga horária. Informações incompletas e envios repetidos geram retrabalho e dificultam o acompanhamento das solicitações.
-O projeto propõe uma triagem automatizada que extraia os dados, aplique regras e apresente o resultado com motivos claros. A decisão acadêmica final continuará sob responsabilidade da coordenação.
-Quem utiliza
-- Aluno: envia o certificado, acompanha o resultado e reenvia documentos com pendências.
-- Coordenação ou secretaria acadêmica: consulta os dados extraídos, revisa pendências e confirma as horas aproveitadas.
-Documentos e dados
-O MVP atenderá certificados de cursos livres e oficinas em modelos previamente selecionados. Será aceito um certificado de uma página por envio, em PDF, JPG ou PNG, vinculado a um aluno cadastrado.
-Campo	Obrigatório
-Nome do participante	Sim
-Título da atividade	Sim
-Instituição emissora	Sim
-Carga horária total	Sim
-Data de início	Sim
-Data de término	Sim
-Data de emissão	Sim
-Código de identificação do certificado	Não
+MVP acadêmico da mentoria Avanade / Residência Tecnológica, ADS, CESAR School, 2026.2.
 
+**Aluno:** Luis Lucena Wanderley Galindo  
+**Mentor:** Kleber Meira  
+**Apresentação:** 25/11/2026
 
-Informações não encontradas deverão retornar null. A IA não deverá inventar nem completar dados ausentes. O nome e a data de ingresso do aluno serão obtidos do cadastro para comparação.
-Regras propostas
-As regras abaixo são demonstrativas e deverão ser ajustadas ao regulamento da instituição antes de um uso real.
-1. Os campos obrigatórios devem estar presentes e legíveis.
-2. O nome do participante deve corresponder ao cadastro, desconsiderando acentos, diferenças entre maiúsculas e minúsculas e espaços extras. Abreviações ou outras divergências serão encaminhadas para revisão.
-3. A carga horária deve ser numérica e maior que zero.
-4. A data de início não pode ser posterior à data de término.
-5. A emissão deve ocorrer entre o término da atividade e a data do envio, incluindo essas datas.
-6. A atividade deve ter começado na data de ingresso do aluno ou depois dela.
-7. Um arquivo idêntico já aprovado para o mesmo aluno será considerado duplicado. O mesmo emissor e código de certificado já aproveitados também indicarão duplicidade.
-8. Sem código de identificação, coincidências de atividade, datas e emissor serão encaminhadas para revisão, sem rejeição automática.
-Resultados da triagem
-Status	Quando utilizar	Próximo passo
-APROVADO_NA_TRIAGEM	Campos claros e todas as regras atendidas	Conferência final pela coordenação
-PENDENTE	Campo ausente, leitura insuficiente, nome ambíguo ou possível duplicidade	Reenvio ou revisão humana
-REJEITADO	Duplicidade confirmada ou descumprimento claro de uma regra	Exibir o motivo ao aluno
+A aplicação recebe um certificado de curso ou oficina, extrai seus campos, confere regras e salva o resultado para consulta. O objetivo é ajudar na triagem de horas complementares.
 
+**Status:** versão funcional para demonstração local. Possui interface web, API Java, regras, histórico persistente e leitura por OCR. A extração com IA é opcional e exige chave própria; o modo padrão usa campos rotulados e não chama IA.
 
-A aprovação na triagem não comprova a autenticidade do documento nem confirma automaticamente o aproveitamento das horas. A decisão final e sua justificativa serão registradas pela coordenação. Falhas técnicas deverão permitir nova tentativa, sem classificar o certificado como rejeitado.
-Fluxo planejado
+## Executar
+
+### Mais simples para ver a demonstração
+
+Com **Java 21** instalado, execute `iniciar.bat` no Windows ou `sh iniciar.sh` no Linux/macOS. Depois abra **http://localhost:8080**.
+
+O pacote de entrega inclui um JAR em `bin/`, então a demonstração por texto funciona sem Maven, Python, OCR, internet ou chave de IA. Ao clonar o repositório sem o JAR, o script compila primeiro com o Maven Wrapper e precisa de internet nessa primeira execução. O terminal deve permanecer aberto. Encerre com `Ctrl+C`.
+
+### GitHub Codespaces (inclui OCR)
+
+1. Suba os arquivos do projeto para o seu repositório, incluindo `.devcontainer` e `.mvn`.
+2. No GitHub, abra **Code > Codespaces > Create codespace**.
+3. Aguarde a criação do ambiente. No terminal, execute `sh iniciar.sh`.
+4. Abra a porta **8080** em **Ports**. Mantenha a visibilidade privada.
+
+A configuração de ambiente inclui Java 21, Maven, Python/OpenCV e Tesseract com idioma português. A primeira criação precisa baixar as dependências. Codespaces não é necessário para quem roda localmente.
+
+### Docker (inclui OCR)
+
+Com Docker e Compose instalados:
+
+```bash
+docker compose up --build
+```
+
+Abra http://localhost:8080. A primeira execução baixa imagens e compila o projeto. Os resultados ficam em `dados/`, também ao usar Docker. Encerre com `Ctrl+C`.
+
+### Compilar e testar manualmente
+
+Java 21 é obrigatório. O Maven Wrapper está incluído.
+
+```bash
+# Linux/macOS
+sh ./mvnw test
+sh ./mvnw package
+java -jar target/validacao-certificados.jar
+```
+
+No Windows, substitua `sh ./mvnw` por `mvnw.cmd`.
+
+Após alterar código ou arquivos da interface, rode `mvnw package` novamente. O script de início prioriza o JAR de `target/` sobre o JAR de entrega em `bin/`.
+
+## Demonstração em dois minutos
+
+1. Selecione **Ana Costa** e mantenha **Texto de exemplo**, sem IA.
+2. Clique em **Completo** e depois em **Analisar certificado**: aprovado na triagem.
+3. Envie o mesmo texto novamente: rejeitado por duplicidade.
+4. Clique em **Sem carga horária** e analise: pendente.
+5. Clique em **Datas inconsistentes** e analise: rejeitado, com o motivo.
+6. Abra uma análise pelo histórico e mostre os campos, as etapas e o JSON.
+7. Se o OCR estiver instalado, envie `exemplos/certificado-valido.png` ou `.pdf` pela aba de arquivo.
+
+O PNG, o PDF e o texto completos representam o **mesmo certificado**, com o mesmo código. Se o texto já foi aprovado, o envio do PNG/PDF será corretamente rejeitado por duplicidade. Para mostrar aprovação via OCR, faça o upload antes da primeira análise por texto.
+
+Se um exemplo completo já estiver salvo, ele continuará duplicado após reiniciar. Para uma demonstração do zero, pare a aplicação e **apague apenas a pasta `dados/` deste projeto**. Isso remove todo o histórico local. A pasta é recriada ao iniciar.
+
+## Cenário e usuários
+
+A coordenação precisa conferir nomes, datas e horas em certificados. Documentos incompletos e envios repetidos geram retrabalho.
+
+- **Aluno:** envia o certificado e consulta a triagem.
+- **Coordenação:** utiliza os dados e os motivos como apoio à conferência.
+
+Neste MVP, dois alunos fictícios já estão disponíveis: Ana Costa e Bruno Lima, ambos com ingresso em 01/01/2025. Não há cadastro de usuários nem login. O resultado não concede horas automaticamente.
+
+## Documentos e informações extraídas
+
+Um certificado de curso livre ou oficina, com uma página, em **PDF, PNG ou JPG**, até **5 MB** e imagem de até **20 megapixels**. PDFs protegidos ou corrompidos não são aceitos. O modo texto aceita até 20.000 caracteres.
+
+| Campo | Obrigatório |
+| --- | --- |
+| Participante | Sim |
+| Atividade | Sim |
+| Instituição emissora | Sim |
+| Carga horária | Sim |
+| Início, término e emissão | Sim |
+| Código do certificado | Não |
+
+No modo local, o texto precisa ter os rótulos dos exemplos, um por linha:
+
+```text
+Participante: Ana Costa
+Atividade: Oficina de Java
+Instituicao: Escola Exemplo
+Carga horaria: 12 horas
+Inicio: 01/10/2026
+Termino: 02/10/2026
+Emissao: 03/10/2026
+Codigo: JAVA-2026-001
+```
+
+Rótulos aceitam acentos, espaços extras e diferenças entre maiúsculas e minúsculas. Datas aceitam `dd/MM/aaaa` ou `aaaa-MM-dd`. Campos não reconhecidos ficam nulos. Dois rótulos iguais tornam aquele campo ambíguo e ele é descartado. O parser local não interpreta qualquer certificado em texto livre.
+
+## Regras e resultados
+
+As regras são propostas do exercício, **não um regulamento oficial da faculdade**.
+
+- Campos obrigatórios precisam ser identificados.
+- Nome deve corresponder ao aluno escolhido, desconsiderando acentos, caixa e espaços extras. Divergência fica pendente para conferência.
+- Carga horária deve ser maior que zero.
+- Início não pode ser posterior ao término nem anterior ao ingresso do aluno.
+- Emissão não pode ser anterior ao término nem estar no futuro. A referência de data é America/Fortaleza.
+- Arquivo/texto idêntico já aprovado na triagem para o aluno é duplicado (hash SHA-256).
+- Emissor e código iguais aos de um certificado aprovado para o aluno também indicam duplicidade.
+- Sem código em um dos registros, coincidência de atividade, emissor e período fica pendente por possível duplicidade.
+
+| Resultado | Significado |
+| --- | --- |
+| `APROVADO_NA_TRIAGEM` | Regras atendidas, aguardando avaliação acadêmica fora do sistema |
+| `PENDENTE` | Campo ausente, data ilegível/inválida, nome divergente ou possível duplicidade |
+| `REJEITADO` | Regra descumprida, como horas zero, datas incoerentes ou duplicidade confirmada |
+
+Quando existem erros e pendências ao mesmo tempo, prevalece `REJEITADO` e todos os motivos são mostrados. Uma falha técnica no OCR ou na IA retorna erro HTTP e não cria uma análise rejeitada.
+
+## Fluxo e tecnologias
+
 ```mermaid
 flowchart TD
-    A[Aluno envia certificado] --> B[Preparar imagem]
+    A[PDF ou imagem] --> B[PDFBox e OpenCV]
     B --> C[Tesseract extrai texto]
-    C --> D[IA organiza os campos em JSON]
-    D --> E[Java aplica as regras]
-    E --> F[Aprovado na triagem]
-    E --> G[Pendente]
-    E --> H[Rejeitado]
-    F --> I[Salvar resultado e motivos]
-    G --> I
-    H --> I
-    I --> J[Aluno consulta o resultado]
-    I --> K[Coordenação revisa solicitações]
+    D[Texto informado] --> E{Modo de extração}
+    C --> E
+    E --> F[Parser local por rótulos]
+    E --> G[OpenAI opcional]
+    F --> H[Java aplica regras]
+    G --> H
+    H --> I[H2 salva análise]
+    I --> J[Tela e API consultam resultado]
 ```
-Arquivos PDF serão convertidos em imagem antes do tratamento com OpenCV. A IA será responsável pela estruturação dos dados; as regras de decisão serão implementadas em Java.
-Tecnologias planejadas
-Tecnologia	Papel no projeto
-Java 21	Implementação da aplicação e das regras
-Spring Boot	API REST e organização do backend
-Maven	Gerenciamento de dependências e execução
-OpenCV	Tratamento de imagens para facilitar a leitura
-Tesseract OCR	Extração do texto das imagens
-API de IA	Organização do texto extraído em JSON
-PostgreSQL	Armazenamento dos dados e resultados
-Interface web	Envio, consulta e revisão das solicitações
 
+| Parte | Escolha |
+| --- | --- |
+| Backend | Java 21, Spring Boot 3.5.5, Maven |
+| Banco | H2 em arquivo, acessado com JdbcTemplate |
+| PDF | PDFBox 3.0.5 renderiza a página como imagem |
+| Pré-processamento | Python/OpenCV: cinza e limiar de Otsu |
+| OCR | Executável Tesseract com idioma português |
+| Extração opcional com IA | API OpenAI, modelo configurável |
+| Interface | HTML, CSS e JavaScript, servidos pelo Spring Boot |
+| Testes | JUnit e MockMvc |
 
-A ferramenta de conversão de PDF em imagem e a tecnologia da interface serão definidas durante o desenvolvimento.
-MVP
-A primeira versão demonstrável deverá permitir:
-- Enviar um certificado vinculado a um aluno cadastrado.
-- Processar o documento com OpenCV, Tesseract e uma API de IA.
-- Validar os campos, o participante, as datas, a carga horária e a duplicidade.
-- Salvar dados extraídos, status e motivos, mantendo acesso ao original para revisão.
-- Consultar o resultado e reenviar documentos com pendências.
-- Registrar a decisão da coordenação, separando horas em triagem de horas confirmadas.
-A demonstração utilizará documentos sintéticos.
-Fora do escopo inicial
-- Consulta automática aos emissores dos certificados.
-- Comprovação de autenticidade ou detecção conclusiva de fraude.
-- Suporte a qualquer modelo de certificado.
-- Integração com o sistema acadêmico da instituição.
-- Aplicação de um regulamento acadêmico completo de categorias e limites de horas.
-Etapas de desenvolvimento
-- [x] Definir o problema, os usuários, as regras e o MVP.
-- [x] Elaborar a documentação inicial.
-- [ ] Criar a estrutura Java com Spring Boot e Maven.
-- [ ] Implementar uma primeira API com dados de certificado enviados em JSON.
-- [ ] Implementar e testar as regras de validação.
-- [ ] Adicionar recebimento e preparação de arquivos.
-- [ ] Integrar Tesseract e OpenCV.
-- [ ] Integrar a API de IA para estruturar o texto.
-- [ ] Implementar persistência e consulta dos resultados.
-- [ ] Criar a interface de envio e revisão.
-- [ ] Preparar a demonstração final.
-As primeiras etapas utilizarão dados estruturados de teste para validar as regras antes da integração com OCR e IA. Cada avanço será registrado em commits com mensagens que descrevam as alterações realizadas.
-Cenários de teste previstos
-Cenário	Resultado esperado
-Certificado completo e consistente com o cadastro	Aprovado na triagem
-Mesmo certificado já aprovado para o aluno	Rejeitado por duplicidade
-Imagem sem carga horária legível	Pendente para reenvio
-Emissão anterior ao término da atividade	Rejeitado por inconsistência de datas
-Nome abreviado que não corresponde diretamente ao cadastro	Pendente para revisão
-Falha no serviço de OCR ou IA	Erro de processamento com possibilidade de nova tentativa
+O banco registra aluno, dados extraídos, texto, status, motivos, etapas e hash. O arquivo original não é armazenado: as imagens intermediárias são temporárias e apagadas após a leitura. Esta é uma simplificação em relação à proposta inicial.
 
+## Instalar OCR localmente (opcional)
 
-Execução
-A aplicação ainda não está implementada. As instruções de instalação, configuração e execução serão adicionadas quando a estrutura inicial estiver disponível.
-Chaves de API e credenciais serão configuradas por variáveis de ambiente e não deverão ser incluídas nos commits. Os exemplos do repositório utilizarão dados fictícios.
-Referência da atividade
-O projeto segue o fluxo didático apresentado pelo professor: documento, tratamento da imagem, OCR, estruturação com IA e validação em Java.
-Repositório de referência: KleberMeira/analise-documento-ia
+No Ubuntu/Debian:
+
+```bash
+sudo apt-get update
+sudo apt-get install python3-opencv tesseract-ocr tesseract-ocr-por
+```
+
+Em outro ambiente com Python, instale `python -m pip install -r scripts/requirements.txt` e instale o Tesseract separadamente, incluindo `por.traineddata`. Apenas instalar o pacote Python não instala o Tesseract.
+
+No Windows, configure os caminhos no PowerShell antes de iniciar, conforme sua instalação:
+
+```powershell
+$env:PYTHON_COMMAND="python"
+$env:TESSERACT_COMMAND="C:\Program Files\Tesseract-OCR\tesseract.exe"
+.\iniciar.bat
+```
+
+`OCR_LANGUAGE` pode mudar o idioma (padrão `por`). `TESSDATA_PREFIX` pode apontar para a pasta que contém os arquivos de idioma. Os comandos devem ser executáveis, não comandos completos com argumentos.
+
+A aplicação informa quando essas ferramentas não estão disponíveis. O modo texto continua funcionando, mas não é apresentado como OCR.
+
+## Ativar IA (opcional)
+
+A opção vem desmarcada. Para ativá-la, configure uma chave com acesso à API e reinicie a aplicação:
+
+```bash
+export OPENAI_API_KEY="sua-chave"
+sh iniciar.sh
+```
+
+PowerShell:
+
+```powershell
+$env:OPENAI_API_KEY="sua-chave"
+.\iniciar.bat
+```
+
+O modelo padrão é `gpt-4o-mini`, configurável em `OPENAI_MODEL`. A API pode ter cobrança independente da assinatura do ChatGPT. Não coloque a chave no código ou no GitHub. O texto do certificado é enviado ao serviço externo somente quando a opção de IA está marcada.
+
+A IA recebe o texto e devolve JSON; Java aplica as regras. Campos retornados são comparados com o texto e valores sem evidência são descartados. A checagem é simples, não uma garantia contra erros. Se a API falhar, o sistema informa o erro, sem fingir que usou IA. Para continuar, desmarque a opção e use os modelos rotulados.
+
+**Validação da entrega:** o contrato HTTP da integração foi testado com um servidor local simulado. Não houve chamada real paga à OpenAI nem validação da qualidade de um modelo remoto nesta entrega.
+
+## API REST
+
+| Método | Rota | Uso |
+| --- | --- | --- |
+| GET | `/api/alunos` | Alunos fictícios disponíveis |
+| GET | `/api/config` | Informa se há chave configurada, sem expô-la |
+| POST | `/api/analises/texto` | Analisa texto enviado em JSON |
+| POST | `/api/analises/arquivo` | Upload multipart com `alunoId`, `arquivo`, `usarIa` |
+| GET | `/api/analises` | Últimas 100 análises |
+| GET | `/api/analises/{id}` | Uma análise completa |
+
+Exemplo de JSON:
+
+```json
+{
+  "alunoId": "1",
+  "texto": "Participante: Ana Costa\nAtividade: Oficina de Java\nInstituicao: Escola Exemplo\nCarga horaria: 12 horas\nInicio: 01/10/2026\nTermino: 02/10/2026\nEmissao: 03/10/2026\nCodigo: JAVA-2026-001",
+  "usarIa": false
+}
+```
+
+Uma análise criada retorna **201** e cabeçalho `Location`, mesmo quando a triagem a rejeita: o registro foi criado com sucesso. O resultado do documento está no campo `status` do JSON.
+
+Outros códigos: **200** consulta, **400** entrada inválida, **404** análise inexistente, **413** upload grande demais, **415** formato não aceito, **502** falha na resposta da IA e **503** dependência indisponível.
+
+## Organização do código
+
+| Arquivo / pasta | Responsabilidade |
+| --- | --- |
+| `Api.java` | Receber requisições HTTP |
+| `Certificados.java` | Juntar extração, duplicidade, regras e gravação |
+| `Validador.java` | Regras do certificado |
+| `Extrator.java` | Parser local e integração opcional com IA |
+| `Ocr.java` | PDF/imagem, OpenCV e Tesseract |
+| `Banco.java` | Salvar e consultar no H2 |
+| `Modelos.java` | Records usados pela aplicação |
+| `Texto.java`, `Erros.java` | Normalização, datas e erros da API |
+| `src/main/resources/static/` | Interface e exemplos para download |
+| `src/test/` | Testes automatizados |
+| `scripts/preprocessar.py` | Tratamento da imagem com OpenCV |
+| `exemplos/` | Certificados fictícios em TXT, PNG e PDF |
+| `docs/` | Roteiro de apresentação, demonstração e verificação |
+
+## O que mudou desde a proposta
+
+A proposta e o README inicial foram preparados em **25/09/2026**. A implementação deste pacote foi consolidada em **19/11/2026**. Essas datas descrevem os artefatos; não representam commits anteriores.
+
+- PostgreSQL foi substituído por H2 em arquivo para reduzir a configuração necessária.
+- Um único tipo documental foi mantido: certificados, com cursos e oficinas no mesmo modelo.
+- O modo local permite demonstrar as regras sem depender de uma API paga.
+- A revisão humana e a confirmação de horas ficaram fora da interface desta versão.
+- Os arquivos originais não são guardados; o texto extraído e o resultado ficam no banco.
+
+## Limitações e próximos passos
+
+O protótipo foi feito para execução local com dados fictícios. Não possui autenticação, autorização por aluno, edição de cadastro ou fluxo de aprovação final. Por padrão o servidor escuta apenas `127.0.0.1`; Docker publica a porta somente no localhost. Não deve ser exposto como serviço público com documentos reais.
+
+O OCR funciona melhor com imagens nítidas e alinhadas. O pré-processamento não corrige perspectiva nem rotação. O parser local atende os modelos rotulados fornecidos. A IA não garante leitura correta de qualquer layout. A detecção de repetição é básica; não há verificação de assinatura ou consulta ao emissor.
+
+Próximos passos: revisão manual com registro da decisão, cadastro e autenticação, mais modelos de certificado, armazenamento controlado do original e regras oficiais de aproveitamento.
+
+## Referências e apoio
+
+- [Orientação do mentor](https://github.com/KleberMeira/analise-documento-ia).
+- [IDP de Luís Nunes](https://github.com/Luisr-nunes/IDP): referência de escopo e documentação. Esta implementação foi escrita para o cenário de certificados.
+- [Tesseract](https://github.com/tesseract-ocr/tesseract).
+- [OpenCV: thresholding](https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html).
+- [Status HTTP](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Reference/Status).
+- Materiais da mentoria enviados no Discord.
+
+O desenvolvimento desta versão contou com assistência de IA para gerar, revisar e testar código e documentação.

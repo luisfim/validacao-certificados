@@ -1,0 +1,10 @@
+target/
+dados/
+.venv/
+.env
+*.log
+.idea/
+.vscode/
+*.iml
+.DS_Store
+bin/*.jar
