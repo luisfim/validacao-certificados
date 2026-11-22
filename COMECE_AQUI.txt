@@ -10,10 +10,6 @@ A demonstracao por texto funciona sem internet e sem chave de IA.
 O executavel ja esta em bin/validacao-certificados.jar.
 Para ler imagens/PDF com OCR, veja Docker ou Codespaces no README.
 
-PARA APRESENTAR
-Abra docs/APRESENTACAO.md. A fala esta por topicos, com explicacao
-e respostas curtas para perguntas. docs/DEMONSTRACAO.md tem a ordem dos cliques.
-
 PARA SUBIR NO GITHUB
 Copie para o seu repositorio preservando a pasta .git que ja existir.
 O .gitignore exclui bin/, target/, dados/ e .env de git add .

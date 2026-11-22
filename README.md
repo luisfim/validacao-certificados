@@ -52,10 +52,6 @@ No Windows, substitua `sh ./mvnw` por `mvnw.cmd`.
 
 Após alterar código ou arquivos da interface, rode `mvnw package` novamente. O script de início prioriza o JAR de `target/` sobre o JAR de entrega em `bin/`.
 
-## Apresentação de 25/11
-
-Roteiro: [fala de cinco minutos, sem slides e com demonstração](docs/APRESENTACAO.md). Para os cliques da demonstração, veja [o guia](docs/DEMONSTRACAO.md).
-
 Pendência do MVP: a tela de decisão final pela coordenação ainda não foi implementada; os resultados são de triagem.
 
 ## Demonstração em dois minutos
@@ -245,7 +241,7 @@ Outros códigos: **200** consulta, **400** entrada inválida, **404** análise i
 | `src/test/` | Testes automatizados |
 | `scripts/preprocessar.py` | Tratamento da imagem com OpenCV |
 | `exemplos/` | Certificados fictícios em TXT, PNG e PDF |
-| `docs/` | Roteiro de apresentação, demonstração e verificação |
+| `docs/` | Registro das verificações do projeto |
 
 ## O que mudou desde a proposta
 
