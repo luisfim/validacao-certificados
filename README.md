@@ -52,6 +52,12 @@ No Windows, substitua `sh ./mvnw` por `mvnw.cmd`.
 
 Após alterar código ou arquivos da interface, rode `mvnw package` novamente. O script de início prioriza o JAR de `target/` sobre o JAR de entrega em `bin/`.
 
+## Apresentação de 25/11
+
+Roteiro: [fala de cinco minutos, sem slides e com demonstração](docs/APRESENTACAO.md). Para os cliques da demonstração, veja [o guia](docs/DEMONSTRACAO.md).
+
+Pendência do MVP: a tela de decisão final pela coordenação ainda não foi implementada; os resultados são de triagem.
+
 ## Demonstração em dois minutos
 
 1. Selecione **Ana Costa** e mantenha **Texto de exemplo**, sem IA.

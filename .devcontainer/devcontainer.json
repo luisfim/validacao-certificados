@@ -1,0 +1,8 @@
+{
+  "name": "Certificados - Java 21 e OCR",
+  "build": {"dockerfile": "Dockerfile"},
+  "forwardPorts": [8080],
+  "portsAttributes": {"8080": {"label": "Validação de certificados", "onAutoForward": "openBrowser"}},
+  "containerEnv": {"APP_ADDRESS": "0.0.0.0"},
+  "postCreateCommand": "sh ./mvnw -q -DskipTests package"
+}

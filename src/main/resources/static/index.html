@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Validação de certificados</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="container"><span class="tag">Mentoria Avanade · 2026.2</span><h1>Validação de certificados</h1><p>Uma primeira conferência das atividades complementares.</p></div></header>
+<main class="container">
+<p class="notice">Protótipo acadêmico com alunos e certificados fictícios. A triagem não confirma autenticidade nem concede horas automaticamente.</p>
+<div class="columns">
+<section class="card"><h2>1. Enviar para análise</h2>
+<form id="form">
+<label for="aluno">Aluno</label><select id="aluno" required><option value="">Carregando...</option></select>
+<fieldset><legend>Entrada</legend><label class="inline"><input type="radio" name="origem" value="texto" checked> Texto de exemplo</label><label class="inline"><input type="radio" name="origem" value="arquivo"> PDF ou imagem</label></fieldset>
+<div id="painelTexto">
+<p class="hint">Este modo testa a extração e as regras sem executar OCR.</p>
+<div class="samples"><button type="button" data-exemplo="valido">Completo</button><button type="button" data-exemplo="pendente">Sem carga horária</button><button type="button" data-exemplo="rejeitado">Datas inconsistentes</button></div>
+<label for="texto">Conteúdo do certificado</label><textarea id="texto" rows="12" maxlength="20000"></textarea>
+</div>
+<div id="painelArquivo" hidden><p class="hint">Uma página, até 5 MB. Requer Python/OpenCV e Tesseract instalados, ou execução pelo Docker.</p><label for="arquivo">Certificado (PDF, PNG ou JPG)</label><input id="arquivo" type="file" accept=".pdf,.png,.jpg,.jpeg"><p class="hint">Exemplos: <a href="exemplos/certificado-valido.png" download>PNG</a> · <a href="exemplos/certificado-valido.pdf" download>PDF</a>. Selecione Ana Costa.</p></div>
+<label class="inline ai"><input type="checkbox" id="ia"> Usar IA para organizar os campos</label><p class="hint" id="iaStatus">Verificando configuração...</p>
+<button id="enviar" class="primary" type="submit">Analisar certificado</button><p id="erro" role="alert" class="error" hidden></p>
+</form></section>
+<section class="card" aria-live="polite"><h2>2. Conferir o resultado</h2><div id="vazio"><p>O resultado aparecerá aqui.</p><p class="hint">Experimente os três exemplos. Envie o completo duas vezes para testar a duplicidade.</p></div><div id="resultado" hidden>
+<p id="status" class="status"></p><p id="modo" class="hint"></p><ul id="motivos"></ul><h3>Campos extraídos</h3><dl id="campos"></dl><details><summary>Etapas e texto usado</summary><ol id="etapas"></ol><pre id="textoExtraido"></pre></details><p><a id="json" target="_blank" rel="noopener">Abrir resposta JSON</a></p>
+</div></section></div>
+<section class="card history"><div class="row"><h2>3. Histórico</h2><button id="atualizar" type="button">Atualizar</button></div><p class="hint">Últimas 100 análises. Os resultados continuam salvos após reiniciar a aplicação.</p><div class="table-scroll"><table><thead><tr><th>Data</th><th>Aluno</th><th>Atividade</th><th>Resultado</th><th>Detalhes</th></tr></thead><tbody id="historico"></tbody></table></div><p id="historicoErro" class="error" role="alert"></p></section>
+<footer>Luis Lucena · Java / Spring Boot · MVP de certificados</footer>
+</main><script src="app.js"></script></body></html>
